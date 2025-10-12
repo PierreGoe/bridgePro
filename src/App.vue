@@ -1018,7 +1018,7 @@ const distributeCards = async () => {
 
   try {
     let attempts = 0;
-    const maxAttempts = 100000; // Limiter les tentatives pour éviter les boucles infinies
+    const maxAttempts = 10000000; // Limiter les tentatives pour éviter les boucles infinies
     let validDeal = null;
 
     while (attempts < maxAttempts && !validDeal) {
