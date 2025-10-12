@@ -213,7 +213,10 @@
               </button>
             </div>
             <div class="progress-bar-wrapper">
-              <div class="progress-bar" :style="{ width: progressPercentage + '%' }"></div>
+              <div
+                class="progress-bar"
+                :style="{ width: progressPercentage + '%' }"
+              ></div>
             </div>
             <div class="progress-info">
               <span>{{ attempts }} / {{ maxAttempts }} tentatives</span>
@@ -1048,16 +1051,22 @@ const distributeCards = async () => {
     maxAttempts.value = 10000000; // Limiter les tentatives pour éviter les boucles infinies
     let validDeal = null;
 
-    while (attempts.value < maxAttempts.value && !validDeal && !shouldCancelDistribution) {
+    while (
+      attempts.value < maxAttempts.value &&
+      !validDeal &&
+      !shouldCancelDistribution
+    ) {
       const deal = randomDistribution();
       if (checkAdvancedCriteria(deal)) {
         validDeal = deal;
         break;
       }
       attempts.value++;
-      
+
       // Mettre à jour la barre de progression
-      progressPercentage.value = Math.round((attempts.value / maxAttempts.value) * 100);
+      progressPercentage.value = Math.round(
+        (attempts.value / maxAttempts.value) * 100
+      );
 
       // Permettre à l'interface de se rafraîchir toutes les 1000 tentatives
       if (attempts.value % 1000 === 0) {
