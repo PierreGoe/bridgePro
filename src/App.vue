@@ -40,6 +40,18 @@
           <!-- Onglet Critères avancés -->
           <div v-if="activeTab === 'criteria'">
             <h2 class="form-title">Critères de points et de distribution</h2>
+            
+            <!-- Instructions d'utilisation -->
+            <div class="instructions-box">
+              <h3>📖 Comment utiliser les critères avancés</h3>
+              <ol>
+                <li><strong>Points HCP</strong> : Indiquez le nombre exact de points pour chaque joueur (As=4, Roi=3, Dame=2, Valet=1)</li>
+                <li><strong>Distribution par couleur</strong> : Définissez le nombre minimum de cartes dans chaque couleur (♠ ♥ ♦ ♣)</li>
+                <li><strong>Laissez vide</strong> les cases pour lesquelles vous n'avez pas de contrainte</li>
+                <li>Cliquez sur <strong>"Distribuer"</strong> pour générer une donne respectant vos critères</li>
+                <li>💡 <em>Astuce</em> : Plus les critères sont restrictifs, plus la génération peut prendre du temps</li>
+              </ol>
+            </div>
 
             <div class="player-criteria">
               <PlayerCriteria
@@ -76,6 +88,17 @@
           <!-- Onglet Scénarios prédéfinis -->
           <div v-if="activeTab === 'scenarios'" class="scenarios-section">
             <h2 class="form-title">Scénarios de Bridge courants</h2>
+            
+            <!-- Instructions d'utilisation -->
+            <div class="instructions-box">
+              <h3>📖 Comment utiliser les scénarios prédéfinis</h3>
+              <ol>
+                <li><strong>Parcourez</strong> les 14 scénarios organisés en 7 catégories (Ouvertures, Fits, Distributionnelles, etc.)</li>
+                <li><strong>Cliquez</strong> sur un scénario pour le sélectionner (il apparaîtra en surbrillance)</li>
+                <li>Cliquez sur <strong>"Générer selon scénario"</strong> pour créer une donne correspondante</li>
+                <li>💡 <em>Astuce</em> : Les scénarios sont conçus pour l'entraînement et l'apprentissage du Bridge</li>
+              </ol>
+            </div>
 
             <div class="scenario-categories">
               <div
@@ -121,7 +144,7 @@
             <DeckManager />
           </div>
 
-          <div class="button-group">
+          <div v-if="activeTab !== 'decks'" class="button-group">
             <button
               @click="distributeCards"
               :disabled="isDistributing"
@@ -160,6 +183,12 @@
           </div>
         </div>
 
+        <!-- Message d'aide initial -->
+        <div v-if="!currentDeal && activeTab !== 'decks'" class="welcome-box">
+          <h3>👋 Bienvenue dans Bridge Dealer Pro</h3>
+          <p>Commencez par définir vos critères ou choisir un scénario, puis cliquez sur le bouton pour générer votre première donne !</p>
+        </div>
+
         <!-- Statistiques de la donne -->
         <DealStats v-if="currentDeal" :deal="currentDeal" />
 
@@ -167,6 +196,7 @@
         <div v-if="currentDeal" class="deal-section">
           <div class="text-center">
             <h3>Donne actuelle (Total: {{ totalPoints }} points)</h3>
+            <p class="help-text">💡 Vous aimez cette donne ? Sauvegardez-la dans un deck pour la retrouver plus tard !</p>
             <button
               @click="showSaveModal = true"
               class="button button-secondary"
@@ -1121,6 +1151,6 @@ const createDeckFromModal = () => {
 // Charger les decks au démarrage
 loadAvailableDecks();
 
-// Générer une donne initiale aléatoire
-generateRandomDeal();
+// Ne pas générer de donne au démarrage pour afficher le message de bienvenue
+// L'utilisateur peut cliquer sur "Nouvelle donne aléatoire" ou "Distribuer"
 </script>

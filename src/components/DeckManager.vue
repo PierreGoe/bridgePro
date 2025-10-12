@@ -1,16 +1,49 @@
 <template>
   <div class="deck-manager">
+    <!-- Instructions d'utilisation -->
+    <div class="instructions-box" style="margin-bottom: 2rem">
+      <h3>📖 Comment gérer vos decks</h3>
+      <ol>
+        <li>
+          <strong>Créer un deck</strong> : Cliquez sur "➕ Créer un nouveau
+          deck" pour organiser vos donnes par thème
+        </li>
+        <li>
+          <strong>Sauvegarder une donne</strong> : Après avoir généré une donne
+          (onglets Critères ou Scénarios), cliquez sur "💾 Sauvegarder cette
+          donne"
+        </li>
+        <li>
+          <strong>Voir les donnes</strong> : Cliquez sur le header d'un deck
+          (fond violet) ou sur le bouton "Voir" pour afficher toutes les donnes
+          sauvegardées
+        </li>
+        <li>
+          <strong>Exporter</strong> : Bouton "📤" pour télécharger un deck au
+          format JSON (partage, backup)
+        </li>
+        <li>
+          <strong>Importer</strong> : Bouton "📥 Importer un deck" pour charger
+          un fichier JSON
+        </li>
+        <li>
+          💡 <em>Astuce</em> : Organisez vos donnes par type (ex: "Chelems",
+          "Entraînement ouvertures")
+        </li>
+      </ol>
+    </div>
+
     <!-- Barre d'actions principale -->
     <div class="deck-actions">
-      <button @click="showCreateModal = true" class="btn-primary">
+      <button @click="showCreateModal = true" class="button button-primary">
         ➕ Créer un nouveau deck
       </button>
-      <button @click="showImportModal = true" class="btn-secondary">
+      <button @click="showImportModal = true" class="button button-secondary">
         📥 Importer un deck
       </button>
       <button
         @click="exportAllDecksToFile"
-        class="btn-secondary"
+        class="button button-secondary"
         :disabled="decks.length === 0"
       >
         📤 Exporter tous les decks
