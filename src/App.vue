@@ -201,6 +201,25 @@
               actif{{ activeCriteriaCount > 1 ? "s" : "" }}
             </div>
           </div>
+
+          <!-- Barre de progression -->
+          <div v-if="isDistributing" class="progress-container">
+            <div class="progress-header">
+              <span class="progress-label">
+                🎲 Recherche d'une donne valide...
+              </span>
+              <button @click="cancelDistribution" class="btn-cancel">
+                ❌ Annuler
+              </button>
+            </div>
+            <div class="progress-bar-wrapper">
+              <div class="progress-bar" :style="{ width: progressPercentage + '%' }"></div>
+            </div>
+            <div class="progress-info">
+              <span>{{ attempts }} / {{ maxAttempts }} tentatives</span>
+              <span>{{ progressPercentage }}%</span>
+            </div>
+          </div>
         </div>
 
         <!-- Messages d'erreur ou de succès -->
@@ -362,6 +381,12 @@ const currentDeal = ref(null);
 const message = ref("");
 const isDistributing = ref(false);
 const selectedScenario = ref(null);
+
+// Variables pour la barre de progression
+const attempts = ref(0);
+const maxAttempts = ref(10000000);
+const progressPercentage = ref(0);
+let shouldCancelDistribution = false;
 
 // Gestion des decks
 const showSaveModal = ref(false);
@@ -1006,6 +1031,9 @@ const distributeCards = async () => {
 
   isDistributing.value = true;
   message.value = "";
+  shouldCancelDistribution = false;
+  attempts.value = 0;
+  progressPercentage.value = 0;
 
   // Vérifier que le total des critères de points ne dépasse pas 40
   const totalPointsCriteria = getTotalPointsCriteria();
@@ -1017,43 +1045,60 @@ const distributeCards = async () => {
   }
 
   try {
-    let attempts = 0;
-    const maxAttempts = 10000000; // Limiter les tentatives pour éviter les boucles infinies
+    maxAttempts.value = 10000000; // Limiter les tentatives pour éviter les boucles infinies
     let validDeal = null;
 
-    while (attempts < maxAttempts && !validDeal) {
+    while (attempts.value < maxAttempts.value && !validDeal && !shouldCancelDistribution) {
       const deal = randomDistribution();
       if (checkAdvancedCriteria(deal)) {
         validDeal = deal;
         break;
       }
-      attempts++;
+      attempts.value++;
+      
+      // Mettre à jour la barre de progression
+      progressPercentage.value = Math.round((attempts.value / maxAttempts.value) * 100);
 
-      // Permettre à l'interface de se rafraîchir toutes les 10000 tentatives
-      if (attempts % 10000 === 0) {
+      // Permettre à l'interface de se rafraîchir toutes les 1000 tentatives
+      if (attempts.value % 1000 === 0) {
         await new Promise((resolve) => setTimeout(resolve, 1));
       }
     }
 
-    if (validDeal) {
+    if (shouldCancelDistribution) {
+      message.value = "⚠️ Distribution annulée par l'utilisateur.";
+      attempts.value = 0;
+      progressPercentage.value = 0;
+    } else if (validDeal) {
       currentDeal.value = validDeal;
       const scenarioText = selectedScenario.value
         ? ` pour le scénario "${selectedScenario.value.name}"`
         : "";
-      message.value = `Donne trouvée en ${attempts + 1} tentative${
-        attempts > 0 ? "s" : ""
+      message.value = `✅ Donne trouvée en ${attempts.value + 1} tentative${
+        attempts.value > 0 ? "s" : ""
       }${scenarioText}.`;
+      attempts.value = 0;
+      progressPercentage.value = 0;
     } else {
       const scenarioText = selectedScenario.value
         ? ` pour le scénario "${selectedScenario.value.name}"`
         : "";
-      message.value = `Impossible de trouver une distribution respectant les critères${scenarioText} après ${maxAttempts} tentatives. Essayez des critères moins restrictifs.`;
+      message.value = `❌ Impossible de trouver une distribution respectant les critères${scenarioText} après ${maxAttempts.value} tentatives. Essayez des critères moins restrictifs.`;
+      attempts.value = 0;
+      progressPercentage.value = 0;
     }
   } catch (error) {
-    message.value = "Erreur lors de la distribution des cartes.";
+    message.value = "❌ Erreur lors de la distribution des cartes.";
+    attempts.value = 0;
+    progressPercentage.value = 0;
   }
 
   isDistributing.value = false;
+};
+
+// Annuler la distribution en cours
+const cancelDistribution = () => {
+  shouldCancelDistribution = true;
 };
 
 // Générer une donne aléatoire sans critères
