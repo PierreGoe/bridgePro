@@ -1056,3 +1056,356 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   NOUVEAU LAYOUT DEUX COLONNES (remplace main + form-section)
+   ============================================================ */
+
+/* Header compact */
+.header {
+  background: #1e3a8a;
+  color: white;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.5rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.header h1 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.header-tagline {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.header-deal-badge {
+  background: rgba(255,255,255,0.15);
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Two-column layout */
+.app-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  height: calc(100vh - 52px);
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  flex-shrink: 0;
+  background: #f8fafc;
+}
+
+.sidebar-tabs .tab-button {
+  flex: 1;
+  padding: 0.6rem 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.sidebar-tabs .tab-button.active {
+  color: #1e40af;
+  border-bottom-color: #1e40af;
+  background: white;
+}
+
+.sidebar-tabs .tab-button:hover:not(.active) {
+  color: #374151;
+  background: #f1f5f9;
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.sidebar-footer {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
+
+.selected-scenario-badge {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sidebar-progress {
+  margin-top: 0.25rem;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.sidebar-progress .progress-label {
+  font-size: 0.85rem;
+}
+
+.sidebar-progress .progress-bar-wrapper {
+  height: 18px;
+}
+
+/* Criteria in sidebar: single column */
+.sidebar-criteria {
+  grid-template-columns: 1fr !important;
+  gap: 0.75rem !important;
+}
+
+/* Scenario grid in sidebar: single column */
+.sidebar-scenario-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.scenario-card {
+  padding: 0.6rem 0.75rem;
+}
+
+.scenario-name {
+  font-size: 0.875rem;
+}
+
+.scenario-description {
+  font-size: 0.75rem;
+}
+
+/* Help details toggle */
+.help-details {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+}
+
+.help-details summary {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: #0369a1;
+  list-style: none;
+  user-select: none;
+}
+
+.help-details summary::-webkit-details-marker { display: none; }
+.help-details[open] summary { border-bottom: 1px solid #bae6fd; }
+
+.help-details-body {
+  padding: 0.6rem 0.75rem;
+  color: #1e3a5f;
+  line-height: 1.6;
+}
+
+.help-details-body ol {
+  margin-left: 1.2rem;
+}
+
+.help-details-body li {
+  margin-bottom: 0.25rem;
+}
+
+/* ---- Main panel ---- */
+.main-panel {
+  background: #f1f5f9;
+  overflow-y: auto;
+  padding: 1.25rem 1.5rem;
+}
+
+/* Deal topbar */
+.deal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.deal-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.deal-topbar-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.deal-topbar-pts {
+  background: #eff6ff;
+  color: #1e40af;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px;
+  border: 1px solid #bfdbfe;
+}
+
+/* ---- Compass layout ---- */
+.compass-layout {
+  display: grid;
+  grid-template-areas:
+    ". north ."
+    "west center east"
+    ". south .";
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  align-items: center;
+  justify-items: center;
+}
+
+.compass-north  { grid-area: north; }
+.compass-west   { grid-area: west;  justify-self: end; }
+.compass-center { grid-area: center; }
+.compass-east   { grid-area: east;  justify-self: start; }
+.compass-south  { grid-area: south; }
+
+.compass-center-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border-radius: 50%;
+  color: white;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 3px 10px rgba(30,64,175,0.35);
+  gap: 2px;
+}
+
+.compass-cross {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.compass-label { font-size: 0.9rem; line-height: 1; }
+.compass-label-w,
+.compass-label-e { font-size: 0.7rem; opacity: 0.8; }
+
+.compass-dot {
+  width: 5px;
+  height: 5px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+}
+
+/* Welcome box in main panel */
+.welcome-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Stats section more compact */
+.stats-section {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.stat-item {
+  padding: 0.6rem 0.75rem;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+}
+
+/* Responsive: mobile */
+@media (max-width: 900px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .sidebar {
+    height: auto;
+    max-height: 60vh;
+    border-right: none;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .main-panel {
+    height: auto;
+    min-height: 50vh;
+  }
+
+  .compass-layout {
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

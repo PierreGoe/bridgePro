@@ -1,152 +1,106 @@
 <template>
   <div id="app">
-    <!-- En-tête de l'application -->
+    <!-- En-tête compact -->
     <header class="header">
-      <div class="container">
-        <h1>Bridge Dealer Pro</h1>
-        <p>
-          Générateur de donnes de Bridge avec critères avancés de points et de
-          distribution
-        </p>
+      <div class="header-content">
+        <div class="header-brand">
+          <h1>♠ Bridge Dealer Pro</h1>
+          <span class="header-tagline">Générateur de donnes · Analyse double-dummy</span>
+        </div>
+        <div v-if="currentDeal" class="header-deal-badge">
+          {{ totalPoints }}/40 pts
+        </div>
       </div>
     </header>
 
-    <!-- Contenu principal -->
-    <main class="main">
-      <div class="container">
-        <!-- Navigation par onglets -->
-        <div class="form-section">
-          <div class="tabs">
-            <button
-              :class="['tab-button', { active: activeTab === 'criteria' }]"
-              @click="activeTab = 'criteria'"
-            >
-              Critères avancés
-            </button>
-            <button
-              :class="['tab-button', { active: activeTab === 'scenarios' }]"
-              @click="activeTab = 'scenarios'"
-            >
-              Scénarios prédéfinis
-            </button>
-            <button
-              :class="['tab-button', { active: activeTab === 'decks' }]"
-              @click="activeTab = 'decks'"
-            >
-              Mes Decks
-            </button>
-          </div>
+    <!-- Layout deux colonnes -->
+    <div class="app-layout">
 
-          <!-- Onglet Critères avancés -->
+      <!-- ========== SIDEBAR: Contrôles ========== -->
+      <aside class="sidebar">
+
+        <!-- Onglets -->
+        <div class="sidebar-tabs">
+          <button :class="['tab-button', { active: activeTab === 'criteria' }]" @click="activeTab = 'criteria'">
+            Critères
+          </button>
+          <button :class="['tab-button', { active: activeTab === 'scenarios' }]" @click="activeTab = 'scenarios'">
+            Scénarios
+          </button>
+          <button :class="['tab-button', { active: activeTab === 'decks' }]" @click="activeTab = 'decks'">
+            Decks
+          </button>
+          <button :class="['tab-button', { active: activeTab === 'segments' }]" @click="activeTab = 'segments'">
+            Segments
+          </button>
+        </div>
+
+        <!-- Corps scrollable -->
+        <div class="sidebar-body">
+
+          <!-- Onglet Critères -->
           <div v-if="activeTab === 'criteria'">
-            <h2 class="form-title">Critères de points et de distribution</h2>
+            <details class="help-details">
+              <summary>📖 Comment utiliser les critères</summary>
+              <div class="help-details-body">
+                <ol>
+                  <li><strong>Points HCP</strong> : nombre exact (As=4, Roi=3, Dame=2, Valet=1)</li>
+                  <li><strong>Distribution</strong> : minimum de cartes par couleur (♠ ♥ ♦ ♣)</li>
+                  <li>Laissez <strong>vide</strong> = pas de contrainte</li>
+                  <li>💡 Plus les critères sont restrictifs, plus la génération est lente</li>
+                </ol>
+              </div>
+            </details>
 
-            <!-- Instructions d'utilisation -->
-            <div class="instructions-box">
-              <h3>📖 Comment utiliser les critères avancés</h3>
-              <ol>
-                <li>
-                  <strong>Points HCP</strong> : Indiquez le nombre exact de
-                  points pour chaque joueur (As=4, Roi=3, Dame=2, Valet=1)
-                </li>
-                <li>
-                  <strong>Distribution par couleur</strong> : Définissez le
-                  nombre minimum de cartes dans chaque couleur (♠ ♥ ♦ ♣)
-                </li>
-                <li>
-                  <strong>Laissez vide</strong> les cases pour lesquelles vous
-                  n'avez pas de contrainte
-                </li>
-                <li>
-                  Cliquez sur <strong>"Distribuer"</strong> pour générer une
-                  donne respectant vos critères
-                </li>
-                <li>
-                  💡 <em>Astuce</em> : Plus les critères sont restrictifs, plus
-                  la génération peut prendre du temps
-                </li>
-              </ol>
-            </div>
-
-            <div class="player-criteria">
+            <div class="player-criteria sidebar-criteria">
               <PlayerCriteria
                 player-name="Nord"
                 :criteria="advancedCriteria.north"
-                @update:criteria="
-                  (newCriteria) => (advancedCriteria.north = newCriteria)
-                "
+                @update:criteria="(c) => (advancedCriteria.north = c)"
               />
               <PlayerCriteria
                 player-name="Sud"
                 :criteria="advancedCriteria.south"
-                @update:criteria="
-                  (newCriteria) => (advancedCriteria.south = newCriteria)
-                "
+                @update:criteria="(c) => (advancedCriteria.south = c)"
               />
               <PlayerCriteria
                 player-name="Est"
                 :criteria="advancedCriteria.east"
-                @update:criteria="
-                  (newCriteria) => (advancedCriteria.east = newCriteria)
-                "
+                @update:criteria="(c) => (advancedCriteria.east = c)"
               />
               <PlayerCriteria
                 player-name="Ouest"
                 :criteria="advancedCriteria.west"
-                @update:criteria="
-                  (newCriteria) => (advancedCriteria.west = newCriteria)
-                "
+                @update:criteria="(c) => (advancedCriteria.west = c)"
               />
             </div>
           </div>
 
-          <!-- Onglet Scénarios prédéfinis -->
-          <div v-if="activeTab === 'scenarios'" class="scenarios-section">
-            <h2 class="form-title">Scénarios de Bridge courants</h2>
-
-            <!-- Instructions d'utilisation -->
-            <div class="instructions-box">
-              <h3>📖 Comment utiliser les scénarios prédéfinis</h3>
-              <ol>
-                <li>
-                  <strong>Parcourez</strong> les 14 scénarios organisés en 7
-                  catégories (Ouvertures, Fits, Distributionnelles, etc.)
-                </li>
-                <li>
-                  <strong>Cliquez</strong> sur un scénario pour le sélectionner
-                  (il apparaîtra en surbrillance)
-                </li>
-                <li>
-                  Cliquez sur <strong>"Générer selon scénario"</strong> pour
-                  créer une donne correspondante
-                </li>
-                <li>
-                  💡 <em>Astuce</em> : Les scénarios sont conçus pour
-                  l'entraînement et l'apprentissage du Bridge
-                </li>
-              </ol>
-            </div>
+          <!-- Onglet Scénarios -->
+          <div v-if="activeTab === 'scenarios'">
+            <details class="help-details">
+              <summary>📖 Comment utiliser les scénarios</summary>
+              <div class="help-details-body">
+                <ol>
+                  <li>Cliquez sur un scénario pour le <strong>sélectionner</strong></li>
+                  <li>Puis cliquez sur <strong>Générer selon scénario</strong></li>
+                  <li>💡 Conçus pour l'entraînement et l'apprentissage</li>
+                </ol>
+              </div>
+            </details>
 
             <div class="scenario-categories">
-              <div
-                v-for="(scenarios, category) in scenariosByCategory"
-                :key="category"
-              >
+              <div v-for="(scenarios, category) in scenariosByCategory" :key="category">
                 <h3 class="category-title">{{ category }}</h3>
-                <div class="scenario-grid">
+                <div class="scenario-grid sidebar-scenario-grid">
                   <div
                     v-for="scenario in scenarios"
                     :key="scenario.id"
-                    :class="[
-                      'scenario-card',
-                      { selected: selectedScenario?.id === scenario.id },
-                    ]"
+                    :class="['scenario-card', { selected: selectedScenario?.id === scenario.id }]"
                     @click="selectScenario(scenario)"
                   >
                     <div class="scenario-name">{{ scenario.name }}</div>
-                    <div class="scenario-description">
-                      {{ scenario.description }}
-                    </div>
+                    <div class="scenario-description">{{ scenario.description }}</div>
                   </div>
                 </div>
               </div>
@@ -156,219 +110,187 @@
               v-if="selectedScenario"
               @click="clearScenario"
               class="button"
-              style="
-                background-color: #6b7280;
-                color: white;
-                margin-bottom: 1rem;
-              "
+              style="background:#6b7280;color:white;margin-bottom:1rem;width:100%"
             >
-              Désélectionner le scénario
+              ✕ Désélectionner "{{ selectedScenario.name }}"
             </button>
           </div>
 
-          <!-- Onglet Mes Decks -->
+          <!-- Onglet Decks -->
           <div v-if="activeTab === 'decks'">
             <DeckManager />
           </div>
 
-          <div v-if="activeTab !== 'decks'" class="button-group">
-            <button
-              @click="distributeCards"
-              :disabled="isDistributing"
-              class="button button-primary"
-            >
-              {{
-                isDistributing
-                  ? "Distribution en cours..."
-                  : selectedScenario
-                  ? "Générer selon scénario"
-                  : "Distribuer"
-              }}
-            </button>
+          <!-- Onglet Segments -->
+          <div v-if="activeTab === 'segments'">
+            <SegmentRedistribution />
+          </div>
 
-            <button
-              @click="generateRandomDeal"
-              :disabled="isDistributing"
-              class="button button-secondary"
-            >
-              Nouvelle donne aléatoire
-            </button>
+        </div><!-- /sidebar-body -->
 
-            <div v-if="activeCriteriaCount > 0" class="criteria-info">
-              {{ activeCriteriaCount }} critère{{
-                activeCriteriaCount > 1 ? "s" : ""
-              }}
-              actif{{ activeCriteriaCount > 1 ? "s" : "" }}
-            </div>
+        <!-- Footer: boutons d'action + progression -->
+        <div v-if="activeTab !== 'decks' && activeTab !== 'segments'" class="sidebar-footer">
+
+          <!-- Scénario actif -->
+          <div v-if="selectedScenario" class="selected-scenario-badge">
+            🎯 {{ selectedScenario.name }}
+          </div>
+
+          <button
+            @click="distributeCards"
+            :disabled="isDistributing"
+            class="button button-primary sidebar-btn"
+          >
+            {{ isDistributing ? "Distribution en cours..." : selectedScenario ? "🎯 Générer selon scénario" : "🃏 Distribuer" }}
+          </button>
+
+          <button
+            @click="generateRandomDeal"
+            :disabled="isDistributing"
+            class="button button-secondary sidebar-btn"
+          >
+            🎲 Donne aléatoire
+          </button>
+
+          <div v-if="activeCriteriaCount > 0" class="criteria-info">
+            {{ activeCriteriaCount }} critère{{ activeCriteriaCount > 1 ? "s" : "" }}
+            actif{{ activeCriteriaCount > 1 ? "s" : "" }}
           </div>
 
           <!-- Barre de progression -->
-          <div v-if="isDistributing" class="progress-container">
+          <div v-if="isDistributing" class="progress-container sidebar-progress">
             <div class="progress-header">
-              <span class="progress-label">
-                🎲 Recherche d'une donne valide...
-              </span>
-              <button @click="cancelDistribution" class="btn-cancel">
-                ❌ Annuler
-              </button>
+              <span class="progress-label">🎲 Recherche...</span>
+              <button @click="cancelDistribution" class="btn-cancel">❌ Annuler</button>
             </div>
             <div class="progress-bar-wrapper">
-              <div
-                class="progress-bar"
-                :style="{ width: progressPercentage + '%' }"
-              ></div>
+              <div class="progress-bar" :style="{ width: progressPercentage + '%' }"></div>
             </div>
             <div class="progress-info">
               <span>{{ attempts }} / {{ maxAttempts }} tentatives</span>
               <span>{{ progressPercentage }}%</span>
             </div>
           </div>
-        </div>
 
-        <!-- Messages d'erreur ou de succès -->
+        </div><!-- /sidebar-footer -->
+
+      </aside><!-- /sidebar -->
+
+      <!-- ========== MAIN PANEL: Résultats ========== -->
+      <main class="main-panel">
+
+        <!-- Message de retour -->
         <div v-if="message">
-          <div :class="messageClasses" class="message">
-            {{ message }}
-          </div>
+          <div :class="messageClasses" class="message">{{ message }}</div>
         </div>
 
-        <!-- Message d'aide initial -->
-        <div v-if="!currentDeal && activeTab !== 'decks'" class="welcome-box">
+        <!-- Accueil (pas encore de donne) -->
+        <div v-if="!currentDeal" class="welcome-box">
           <h3>👋 Bienvenue dans Bridge Dealer Pro</h3>
           <p>
-            Commencez par définir vos critères ou choisir un scénario, puis
-            cliquez sur le bouton pour générer votre première donne !
+            Définissez vos critères ou choisissez un scénario dans le panneau gauche,
+            puis cliquez sur <strong>Distribuer</strong> pour générer votre première donne.
           </p>
         </div>
 
-        <!-- Statistiques de la donne -->
-        <DealStats v-if="currentDeal" :deal="currentDeal" />
+        <!-- Donne générée -->
+        <div v-if="currentDeal" class="deal-view">
 
-        <!-- Affichage des mains -->
-        <div v-if="currentDeal" class="deal-section">
-          <div class="text-center">
-            <h3>Donne actuelle (Total: {{ totalPoints }} points)</h3>
-            <p class="help-text">
-              💡 Vous aimez cette donne ? Sauvegardez-la dans un deck pour la
-              retrouver plus tard !
-            </p>
-            <button
-              @click="showSaveModal = true"
-              class="button button-secondary"
-              style="margin-top: 1rem"
-            >
-              💾 Sauvegarder cette donne
+          <!-- Barre de titre de la donne -->
+          <div class="deal-topbar">
+            <div class="deal-topbar-left">
+              <span class="deal-topbar-title">Donne actuelle</span>
+              <span class="deal-topbar-pts">{{ totalPoints }}/40 pts</span>
+            </div>
+            <button @click="showSaveModal = true" class="button button-secondary">
+              💾 Sauvegarder
             </button>
           </div>
 
-          <!-- Disposition classique du Bridge : Nord en haut, Sud en bas, Est à droite, Ouest à gauche -->
-          <div class="deal-layout">
-            <!-- Ouest -->
-            <div class="deal-column">
+          <!-- Statistiques -->
+          <DealStats :deal="currentDeal" />
+
+          <!-- Mains en disposition boussole -->
+          <div class="compass-layout">
+            <div class="compass-north">
+              <PlayerHand player-name="Nord" :cards="currentDeal.north" />
+            </div>
+            <div class="compass-west">
               <PlayerHand player-name="Ouest" :cards="currentDeal.west" />
             </div>
-
-            <!-- Nord et Sud (colonne centrale) -->
-            <div class="deal-column">
-              <PlayerHand player-name="Nord" :cards="currentDeal.north" />
-              <PlayerHand player-name="Sud" :cards="currentDeal.south" />
+            <div class="compass-center">
+              <div class="compass-center-box">
+                <span class="compass-label">N</span>
+                <div class="compass-cross">
+                  <span class="compass-label-w">O</span>
+                  <div class="compass-dot"></div>
+                  <span class="compass-label-e">E</span>
+                </div>
+                <span class="compass-label">S</span>
+              </div>
             </div>
-
-            <!-- Est -->
-            <div class="deal-column">
+            <div class="compass-east">
               <PlayerHand player-name="Est" :cards="currentDeal.east" />
             </div>
+            <div class="compass-south">
+              <PlayerHand player-name="Sud" :cards="currentDeal.south" />
+            </div>
           </div>
-        </div>
-      </div>
-    </main>
+
+          <!-- Analyse Double-Dummy -->
+          <DoubleDummy :key="currentDeal" :deal="currentDeal" />
+
+        </div><!-- /deal-view -->
+
+      </main><!-- /main-panel -->
+
+    </div><!-- /app-layout -->
 
     <!-- Modal de sauvegarde de donne -->
-    <div
-      v-if="showSaveModal"
-      class="modal-overlay"
-      @click="showSaveModal = false"
-    >
+    <div v-if="showSaveModal" class="modal-overlay" @click="showSaveModal = false">
       <div class="modal-content" @click.stop>
         <h3>Sauvegarder la donne</h3>
         <div class="form-group">
           <label>Sélectionner un deck</label>
           <select v-model="selectedDeckId" class="deck-select">
             <option :value="null">-- Choisir un deck --</option>
-            <option
-              v-for="deck in availableDecks"
-              :key="deck.id"
-              :value="deck.id"
-            >
+            <option v-for="deck in availableDecks" :key="deck.id" :value="deck.id">
               {{ deck.name }} ({{ deck.hands.length }} donne(s))
             </option>
           </select>
-          <button
-            @click="showCreateNewDeckInModal = true"
-            class="btn-link"
-            style="margin-top: 0.5rem"
-          >
+          <button @click="showCreateNewDeckInModal = true" class="btn-link" style="margin-top: 0.5rem">
             ➕ Créer un nouveau deck
           </button>
         </div>
         <div class="form-group">
           <label>Notes (optionnelles)</label>
-          <textarea
-            v-model="saveNotes"
-            placeholder="Ex: Belle répartition avec fit majeur"
-          ></textarea>
+          <textarea v-model="saveNotes" placeholder="Ex: Belle répartition avec fit majeur"></textarea>
         </div>
         <div class="modal-actions">
-          <button
-            @click="saveDealToDeck"
-            class="btn-primary"
-            :disabled="!selectedDeckId"
-          >
-            Sauvegarder
-          </button>
-          <button @click="showSaveModal = false" class="btn-secondary">
-            Annuler
-          </button>
+          <button @click="saveDealToDeck" class="btn-primary" :disabled="!selectedDeckId">Sauvegarder</button>
+          <button @click="showSaveModal = false" class="btn-secondary">Annuler</button>
         </div>
       </div>
     </div>
 
-    <!-- Mini-modal pour créer un deck depuis la modal de sauvegarde -->
-    <div
-      v-if="showCreateNewDeckInModal"
-      class="modal-overlay"
-      @click="showCreateNewDeckInModal = false"
-    >
+    <!-- Mini-modal création deck -->
+    <div v-if="showCreateNewDeckInModal" class="modal-overlay" @click="showCreateNewDeckInModal = false">
       <div class="modal-content" @click.stop>
         <h3>Créer un nouveau deck</h3>
         <div class="form-group">
           <label>Nom du deck</label>
-          <input
-            v-model="newDeckNameInModal"
-            type="text"
-            placeholder="Ex: Donnes intéressantes"
-            @keyup.enter="createDeckFromModal"
-          />
+          <input v-model="newDeckNameInModal" type="text" placeholder="Ex: Donnes intéressantes" @keyup.enter="createDeckFromModal" />
         </div>
         <div class="modal-actions">
-          <button
-            @click="createDeckFromModal"
-            class="btn-primary"
-            :disabled="!newDeckNameInModal.trim()"
-          >
-            Créer
-          </button>
-          <button
-            @click="showCreateNewDeckInModal = false"
-            class="btn-secondary"
-          >
-            Annuler
-          </button>
+          <button @click="createDeckFromModal" class="btn-primary" :disabled="!newDeckNameInModal.trim()">Créer</button>
+          <button @click="showCreateNewDeckInModal = false" class="btn-secondary">Annuler</button>
         </div>
       </div>
     </div>
+
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed } from "vue";
@@ -376,6 +298,8 @@ import PlayerHand from "./components/PlayerHand.vue";
 import PlayerCriteria from "./components/PlayerCriteria.vue";
 import DealStats from "./components/DealStats.vue";
 import DeckManager from "./components/DeckManager.vue";
+import SegmentRedistribution from "./components/SegmentRedistribution.vue";
+import DoubleDummy from "./components/DoubleDummy.vue";
 import { addHandToDeck, loadDecks, createDeck } from "./utils/deckManager.js";
 
 // État de l'application
